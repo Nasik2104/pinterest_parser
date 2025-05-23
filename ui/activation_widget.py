@@ -1,7 +1,5 @@
 from PyQt6.QtWidgets import QWidget, QVBoxLayout, QLabel, QLineEdit, QPushButton, QMessageBox
-from core.key_manager import get_hwid, verify_key
-import json
-import os
+from core.key_manager import get_hwid, verify_key, save_license_key
 
 class ActivationWidget(QWidget):
     def __init__(self, on_success_callback):
@@ -14,7 +12,6 @@ class ActivationWidget(QWidget):
         layout = QVBoxLayout()
 
         hwid = get_hwid()
-
         layout.addWidget(QLabel("Ваш HWID:"))
         layout.addWidget(QLabel(hwid))
 
@@ -32,8 +29,7 @@ class ActivationWidget(QWidget):
         hwid = get_hwid()
         key = self.key_input.text().strip()
         if verify_key(hwid, key):
-            with open("license.json", "w") as f:
-                json.dump({"key": key}, f)
+            save_license_key(key)
             QMessageBox.information(self, "OK", "Активація успішна!")
             self.on_success_callback()
             self.close()

@@ -1,17 +1,15 @@
 from PyQt6.QtWidgets import QApplication
-import sys, json, os
-from core.key_manager import get_hwid, verify_key
+import sys
+from core.key_manager import get_hwid, verify_key, init_db, load_license_key
 from ui.activation_widget import ActivationWidget
 from ui.ui_mainwindow import MainWindow
 
 def is_activated():
-    if not os.path.exists("license.json"):
-        return False
-    with open("license.json", "r") as f:
-        data = json.load(f)
-    return verify_key(get_hwid(), data.get("key", ""))
+    key = load_license_key()
+    return key and verify_key(get_hwid(), key)
 
 def main():
+    init_db()
     app = QApplication(sys.argv)
 
     def launch_main():
